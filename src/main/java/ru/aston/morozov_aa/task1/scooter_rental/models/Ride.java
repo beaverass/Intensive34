@@ -2,7 +2,7 @@ package ru.aston.morozov_aa.task1.scooter_rental.models;
 
 public abstract class Ride implements Discount{
 
-    private Double coefficient = 10.0;
+    private Double coefficient = 11.0;
     private Double routLength;
     private User user;
     private int id;
