@@ -2,23 +2,25 @@ package ru.aston.morozov_aa.task1.scooter_rental.models;
 
 public class RideByMetrics extends Ride{
 
-    public RideByMetrics(Double routLength, User user, int id) {
-        super(routLength, user, id);
-        this.setCoefficient(15.0);
+    public RideByMetrics(Double coefficient, Double routLength, User user, int id) {
+        super(coefficient, routLength, user, id);
     }
 
     @Override
     public boolean isDiscountWorks() {
-        if (this.getUser().getAge() > 60) {
+        boolean discountCondition = this.getUser().getAge() > 60;
+
+        if (discountCondition) {
             return true;
         }
+
         return false;
     }
 
     @Override
     public Double getDiscount() {
         if(isDiscountWorks()){
-            return 50.0;
+            return DiscountSum.RIDE_BY_METRICS_DISCOUNT.getDiscountSum();
         }
         return 0.0;
     }

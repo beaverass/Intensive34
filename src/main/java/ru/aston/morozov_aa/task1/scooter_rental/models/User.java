@@ -1,6 +1,6 @@
 package ru.aston.morozov_aa.task1.scooter_rental.models;
 
-public class User {
+public class User implements Comparable<User>{
     private int age;
     private String surName;
     private String name;
@@ -62,5 +62,10 @@ public class User {
                 ", surName='" + surName + '\'' +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(User u) {
+        return this.age - u.getAge();
     }
 }
