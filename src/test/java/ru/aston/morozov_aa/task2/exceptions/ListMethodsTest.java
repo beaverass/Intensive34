@@ -65,7 +65,7 @@ public class ListMethodsTest {
         list.removeAll(List.of("Some", "Yo", "pop"));
 
 
-        Assertions.assertEquals(true, list.isEmpty());
+        Assertions.assertTrue(list.isEmpty());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ListMethodsTest {
         list.add("pop");
         list.clear();
 
-        Assertions.assertEquals(true, list.isEmpty());
+        Assertions.assertTrue(list.isEmpty());
     }
 
     @Test
