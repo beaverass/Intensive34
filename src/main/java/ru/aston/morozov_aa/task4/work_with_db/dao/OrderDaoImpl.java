@@ -1,8 +1,9 @@
 package ru.aston.morozov_aa.task4.work_with_db.dao;
 
 import ru.aston.morozov_aa.task4.work_with_db.config.DataSource;
-import ru.aston.morozov_aa.task4.work_with_db.exceptions.OrderNotFoundException;
-import ru.aston.morozov_aa.task4.work_with_db.models.Order;
+import ru.aston.morozov_aa.task4.work_with_db.exception.OrderAlreadyExistException;
+import ru.aston.morozov_aa.task4.work_with_db.exception.OrderNotFoundException;
+import ru.aston.morozov_aa.task4.work_with_db.model.Order;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,14 +11,15 @@ import java.util.List;
 
 public class OrderDaoImpl implements OrderDao{
 
-    private final Connection connection = DataSource.getInstance().getConnection();
+    private final DataSource dataSource = DataSource.getInstance();
 
     @Override
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM orders;";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -35,13 +37,14 @@ public class OrderDaoImpl implements OrderDao{
     }
 
     @Override
-    public Order findOrderById(int id) throws OrderNotFoundException {
+    public Order findOrderById(String id) throws OrderNotFoundException {
         Order order;
         String query = "SELECT * FROM orders WHERE id = ?;";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -51,33 +54,32 @@ public class OrderDaoImpl implements OrderDao{
 
             order = getOrderFromResultSet(resultSet);
 
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return order;
     }
 
     @Override
-    public boolean delete(int id) throws OrderNotFoundException {
+    public boolean delete(String id) throws OrderNotFoundException {
 
         String query = "DELETE FROM orders WHERE id = ?;";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        if(!isOrderExist(id)){
+            throw new OrderNotFoundException("Order with id = " + id + " not found");
+        }
 
-            if(!isOrderExist(id)){
-                throw new OrderNotFoundException("Order with id = " + id + " not found");
-            }
+        try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, id);
 
             int rowsAffected  = preparedStatement.executeUpdate();
 
             if(rowsAffected > 0) {
                 return true;
             }
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -89,14 +91,20 @@ public class OrderDaoImpl implements OrderDao{
 
 
     @Override
-    public boolean create(Order order) {
-        String query = "INSERT INTO orders(name, order_date, shipper_id) VALUES (?, ?, ?);";
+    public boolean create(Order order) throws OrderAlreadyExistException {
+        String query = "INSERT INTO orders(id, name, order_date, shipper_id) VALUES (?, ?, ?, ?);";
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        if(isOrderExist(order.getId())){
+            throw new OrderAlreadyExistException("Order with id = " + order.getId() + " is already exist");
+        }
 
-            preparedStatement.setString(1, order.getName());
-            preparedStatement.setDate(2, order.getOrderDate());
-            preparedStatement.setInt(3, order.getShipperId());
+        try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, order.getId());
+            preparedStatement.setString(2, order.getName());
+            preparedStatement.setDate(3, order.getOrderDate());
+            preparedStatement.setString(4, order.getShipperId());
 
             int rowsAffected  = preparedStatement.executeUpdate();
 
@@ -118,17 +126,17 @@ public class OrderDaoImpl implements OrderDao{
         Order updatedOrder;
         String query = "UPDATE orders SET name = ?, order_date = ?, shipper_id = ? WHERE id = ?;";
 
+        if(!isOrderExist(order.getId())){
+            throw new OrderNotFoundException("Order with id = " + order.getId() + " not found");
+        }
 
-        try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            if(!isOrderExist(order.getId())){
-                throw new OrderNotFoundException("Order with id = " + order.getId() + " not found");
-            }
+        try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, order.getName());
             preparedStatement.setDate(2, order.getOrderDate());
-            preparedStatement.setInt(3, order.getShipperId());
-            preparedStatement.setInt(4, order.getId());
+            preparedStatement.setString(3, order.getShipperId());
+            preparedStatement.setString(4, order.getId());
 
             preparedStatement.executeUpdate();
 
@@ -141,7 +149,8 @@ public class OrderDaoImpl implements OrderDao{
         return updatedOrder;
     }
 
-    private boolean isOrderExist(int id) {
+
+    private boolean isOrderExist(String id) {
         try {
             findOrderById(id);
             return true;
@@ -150,13 +159,12 @@ public class OrderDaoImpl implements OrderDao{
         }
     }
 
-
     private static Order getOrderFromResultSet(ResultSet resultSet) throws SQLException {
 
-        Integer orderId = resultSet.getInt("id");
+        String orderId = resultSet.getString("id");
         String name = resultSet.getString("name");
         Date orderDate = resultSet.getDate("order_date");
-        Integer shipperId = resultSet.getInt("shipper_id");
+        String shipperId = resultSet.getString("shipper_id");
 
         Order order = new Order();
 

@@ -1,21 +1,21 @@
-package ru.aston.morozov_aa.task4.work_with_db.models;
+package ru.aston.morozov_aa.task4.work_with_db.model;
 
 import java.sql.Date;
 import java.util.Objects;
 
 public class User {
 
-    private Integer id;
+    private String id;
     private String fullName;
     private String phoneNumber;
     private String email;
     private Date birthday;
-    private Integer orderId;
+    private String orderId;
 
     public User() {
     }
 
-    public User(Integer id, String fullName, String phoneNumber, String email, Date birthday, Integer orderId) {
+    public User(String id, String fullName, String phoneNumber, String email, Date birthday, String orderId) {
         this.id = id;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
@@ -24,7 +24,7 @@ public class User {
         this.orderId = orderId;
     }
 
-    public User(String fullName, String phoneNumber, String email, Date birthday, Integer orderId) {
+    public User(String fullName, String phoneNumber, String email, Date birthday, String orderId) {
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -32,11 +32,11 @@ public class User {
         this.orderId = orderId;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -72,16 +72,17 @@ public class User {
         this.birthday = birthday;
     }
 
-    public Integer getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -109,12 +110,12 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", birthday=" + birthday +
-                ", orderId=" + orderId +
+                ", orderId='" + orderId + '\'' +
                 '}';
     }
 }

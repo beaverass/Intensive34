@@ -22,17 +22,6 @@ public class DataSource {
         this.username = resourceBundle.getString("username");
         this.driver = resourceBundle.getString("driver");
 
-        try {
-
-            Class.forName(driver);
-            this.connection = DriverManager.getConnection(url, username, password);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -46,11 +35,14 @@ public class DataSource {
     public synchronized Connection getConnection(){
 
         try {
-            if(connection.isClosed() || connection == null){
+
+            if(connection == null || connection.isClosed()){
+                Class.forName(driver);
                 connection = DriverManager.getConnection(url, username, password);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
         return connection;

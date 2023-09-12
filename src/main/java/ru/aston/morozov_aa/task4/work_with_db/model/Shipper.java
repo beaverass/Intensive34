@@ -1,25 +1,26 @@
-package ru.aston.morozov_aa.task4.work_with_db.models;
+package ru.aston.morozov_aa.task4.work_with_db.model;
 
 import java.util.Objects;
 
 public class Shipper {
-    private Integer id;
+    private String id;
     private String name;
     private String phoneNumber;
 
     public Shipper() {
     }
 
-    public Shipper(String name, String phoneNumber) {
+    public Shipper(String id, String name, String phoneNumber) {
+        this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -62,7 +63,7 @@ public class Shipper {
     @Override
     public String toString() {
         return "Shipper{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';

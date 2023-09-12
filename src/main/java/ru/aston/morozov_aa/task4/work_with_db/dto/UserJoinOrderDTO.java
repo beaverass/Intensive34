@@ -1,7 +1,9 @@
 package ru.aston.morozov_aa.task4.work_with_db.dto;
 
+import java.util.Objects;
+
 public class UserJoinOrderDTO {
-    private Integer id;
+    private String id;
     private String fullName;
     private String email;
     private String orderName;
@@ -10,7 +12,7 @@ public class UserJoinOrderDTO {
     public UserJoinOrderDTO() {
     }
 
-    public UserJoinOrderDTO(Integer id, String fullName, String email, String orderName, String orderShipperName) {
+    public UserJoinOrderDTO(String id, String fullName, String email, String orderName, String orderShipperName) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -18,11 +20,11 @@ public class UserJoinOrderDTO {
         this.orderShipperName = orderShipperName;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -59,9 +61,34 @@ public class UserJoinOrderDTO {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserJoinOrderDTO that = (UserJoinOrderDTO) o;
+
+        if (!Objects.equals(id, that.id)) return false;
+        if (!Objects.equals(fullName, that.fullName)) return false;
+        if (!Objects.equals(email, that.email)) return false;
+        if (!Objects.equals(orderName, that.orderName)) return false;
+        return Objects.equals(orderShipperName, that.orderShipperName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (orderName != null ? orderName.hashCode() : 0);
+        result = 31 * result + (orderShipperName != null ? orderShipperName.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "UserJoinOrderDTO{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 ", orderName='" + orderName + '\'' +

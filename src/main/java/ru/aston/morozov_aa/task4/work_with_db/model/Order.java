@@ -1,35 +1,36 @@
-package ru.aston.morozov_aa.task4.work_with_db.models;
+package ru.aston.morozov_aa.task4.work_with_db.model;
 
 import java.sql.Date;
 import java.util.Objects;
 
 public class Order {
-    private Integer id;
+    private String id;
     private String name;
     private Date orderDate;
-    private Integer shipperId;
+    private String shipperId;
 
     public Order() {
     }
 
-    public Order(String name, Date orderDate, Integer shipperId) {
-        this.name = name;
-        this.orderDate = orderDate;
-        this.shipperId = shipperId;
-    }
-
-    public Order(Integer id, String name, Date orderDate, Integer shipperId) {
+    public Order(String id, String name, Date orderDate, String shipperId) {
         this.id = id;
         this.name = name;
         this.orderDate = orderDate;
         this.shipperId = shipperId;
     }
 
-    public Integer getId() {
+    public Order(String name, Date orderDate, String shipperId) {
+        this.name = name;
+        this.orderDate = orderDate;
+        this.shipperId = shipperId;
+    }
+
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -49,11 +50,11 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public Integer getShipperId() {
+    public String getShipperId() {
         return shipperId;
     }
 
-    public void setShipperId(Integer shipperId) {
+    public void setShipperId(String shipperId) {
         this.shipperId = shipperId;
     }
 
@@ -82,10 +83,10 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", orderDate=" + orderDate +
-                ", shipperId=" + shipperId +
+                ", shipperId='" + shipperId + '\'' +
                 '}';
     }
 }
