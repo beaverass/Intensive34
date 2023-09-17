@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import ru.aston.morozov_aa.task1.scooter_rental.models.*;
 import ru.aston.morozov_aa.task1.scooter_rental.services.RideCalculator;
 import ru.aston.morozov_aa.task1.scooter_rental.services.SimpleRideCalculator;
-import ru.aston.morozov_aa.task2.exceptions.RideException;
 import ru.aston.morozov_aa.task2.exceptions.TooLongRideException;
 import ru.aston.morozov_aa.task2.exceptions.TooSmallRideException;
 
