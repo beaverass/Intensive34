@@ -24,7 +24,6 @@ public class DataSource {
 
     }
 
-
     public static synchronized DataSource getInstance(){
         if(dataSource == null) {
             dataSource = new DataSource();

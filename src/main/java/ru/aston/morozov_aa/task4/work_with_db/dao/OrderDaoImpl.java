@@ -1,6 +1,7 @@
 package ru.aston.morozov_aa.task4.work_with_db.dao;
 
 import ru.aston.morozov_aa.task4.work_with_db.config.DataSource;
+import ru.aston.morozov_aa.task4.work_with_db.dao.query.OrderSqlQuery;
 import ru.aston.morozov_aa.task4.work_with_db.exception.OrderAlreadyExistException;
 import ru.aston.morozov_aa.task4.work_with_db.exception.OrderNotFoundException;
 import ru.aston.morozov_aa.task4.work_with_db.model.Order;
@@ -16,7 +17,7 @@ public class OrderDaoImpl implements OrderDao{
     @Override
     public List<Order> findAll() {
         List<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM orders;";
+        String query = OrderSqlQuery.FIND_ALL.getQuery();
 
         try(Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -39,7 +40,7 @@ public class OrderDaoImpl implements OrderDao{
     @Override
     public Order findOrderById(String id) throws OrderNotFoundException {
         Order order;
-        String query = "SELECT * FROM orders WHERE id = ?;";
+        String query = OrderSqlQuery.FIND_BY_ID.getQuery();
 
         try(Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -64,7 +65,7 @@ public class OrderDaoImpl implements OrderDao{
     @Override
     public boolean delete(String id) throws OrderNotFoundException {
 
-        String query = "DELETE FROM orders WHERE id = ?;";
+        String query = OrderSqlQuery.DELETE_BY_ID.getQuery();
 
         if(!isOrderExist(id)){
             throw new OrderNotFoundException("Order with id = " + id + " not found");
@@ -92,7 +93,7 @@ public class OrderDaoImpl implements OrderDao{
 
     @Override
     public boolean create(Order order) throws OrderAlreadyExistException {
-        String query = "INSERT INTO orders(id, name, order_date, shipper_id) VALUES (?, ?, ?, ?);";
+        String query = OrderSqlQuery.CREATE.getQuery();
 
         if(isOrderExist(order.getId())){
             throw new OrderAlreadyExistException("Order with id = " + order.getId() + " is already exist");
@@ -124,7 +125,7 @@ public class OrderDaoImpl implements OrderDao{
     @Override
     public Order update(Order order) throws OrderNotFoundException {
         Order updatedOrder;
-        String query = "UPDATE orders SET name = ?, order_date = ?, shipper_id = ? WHERE id = ?;";
+        String query = OrderSqlQuery.UPDATE.getQuery();
 
         if(!isOrderExist(order.getId())){
             throw new OrderNotFoundException("Order with id = " + order.getId() + " not found");

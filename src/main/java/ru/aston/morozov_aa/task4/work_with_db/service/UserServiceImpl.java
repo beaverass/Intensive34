@@ -5,6 +5,7 @@ import ru.aston.morozov_aa.task4.work_with_db.dto.UserJoinOrderDTO;
 import ru.aston.morozov_aa.task4.work_with_db.exception.UserAlreadyExistException;
 import ru.aston.morozov_aa.task4.work_with_db.exception.UserNotFoundException;
 import ru.aston.morozov_aa.task4.work_with_db.model.User;
+import ru.aston.morozov_aa.task4.work_with_db.util.GeneratorId;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,8 +40,7 @@ public class UserServiceImpl implements UserService {
             return userDao.create(user);
         }
 
-        UUID uuid = UUID.randomUUID();
-        user.setId(uuid.toString());
+        user.setId(GeneratorId.generateId());
 
         return userDao.create(user);
     }

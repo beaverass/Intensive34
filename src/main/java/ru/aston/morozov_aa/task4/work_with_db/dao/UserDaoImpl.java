@@ -1,6 +1,7 @@
 package ru.aston.morozov_aa.task4.work_with_db.dao;
 
 import ru.aston.morozov_aa.task4.work_with_db.config.DataSource;
+import ru.aston.morozov_aa.task4.work_with_db.dao.query.UserSqlQuery;
 import ru.aston.morozov_aa.task4.work_with_db.dto.UserJoinOrderDTO;
 import ru.aston.morozov_aa.task4.work_with_db.exception.UserAlreadyExistException;
 import ru.aston.morozov_aa.task4.work_with_db.exception.UserNotFoundException;
@@ -21,7 +22,7 @@ public class UserDaoImpl implements UserDao{
     public List<User> findAll() {
 
         List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users;";
+        String query = UserSqlQuery.FIND_ALL.getQuery();
 
         try(Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -44,7 +45,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public User findUserById(String id) throws UserNotFoundException {
         User user;
-        String query = "SELECT * FROM users WHERE id = ?;";
+        String query = UserSqlQuery.FIND_BY_ID.getQuery();
 
         try(Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -69,7 +70,7 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public boolean delete(String id) throws UserNotFoundException {
-        String query = "DELETE FROM users WHERE id = ?;";
+        String query = UserSqlQuery.DELETE_BY_ID.getQuery();
 
         if(!isUserExist(id)){
             throw new UserNotFoundException("User with id = " + id + " not found");
@@ -95,7 +96,7 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public boolean create(User user) throws UserAlreadyExistException {
-        String query = "INSERT INTO users (id, full_name, phone_number, email, birthday, order_id) VALUES (?, ?, ?, ?, ?, ?);";
+        String query = UserSqlQuery.CREATE.getQuery();
 
         if (isUserExist(user.getId())){
             throw new UserAlreadyExistException("User with id = " + user.getId() + " already exist");
@@ -128,8 +129,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public User update(User user) throws UserNotFoundException {
         User updatedUser;
-        String query =
-                "UPDATE users SET full_name = ?, phone_number = ?, email = ?, birthday = ?, order_id = ? WHERE id = ?;";
+        String query = UserSqlQuery.UPDATE.getQuery();
 
         if(!isUserExist(user.getId())) {
             throw new UserNotFoundException("User with id = " + user.getId() + " not found");
@@ -162,8 +162,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public List<UserJoinOrderDTO> findInfoAboutUsersJoinOrders() {
         List<UserJoinOrderDTO> infoAboutUsersAndOrders = new ArrayList<>();
-        String query =
-                "SELECT u.id AS user_id, full_name, email, o.name AS order_name, s.name AS shipper_name FROM users u INNER JOIN orders o ON u.order_id = o.id INNER JOIN shippers s ON o.shipper_id = s.id;";
+        String query = UserSqlQuery.JOIN_ORDERS_SHIPPERS.getQuery();
 
         try(Connection connection = dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {

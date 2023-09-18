@@ -44,6 +44,7 @@ public class StreamApiTest {
 
     }
 
+    @DisplayName("числа в диапазоне от 1 до 50 с шагом 2")
     //Вывести числа в диапазоне от 1 до 50 с шагом 2,
     @Test
     public void numsFromOneToFiftyByStepTwoTest(){
@@ -264,6 +265,9 @@ public class StreamApiTest {
 
 
     }
+
+
+
 
 
 
