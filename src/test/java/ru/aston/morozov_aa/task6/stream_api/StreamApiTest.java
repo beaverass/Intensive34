@@ -3,10 +3,9 @@ package ru.aston.morozov_aa.task6.stream_api;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,7 +91,7 @@ public class StreamApiTest {
 
     //Пропустить первые 10 элементов списка [0, 1, 2,.., 99] и начать выводить с 11-го элемента, выводя каждый 10-й элемент
     @Test
-    public void skipTenElemAndPrintEachTenth(){
+    public void skipTenElemAndPrintEachTenthTest(){
         List<Integer> nums = Stream.iterate(0, n -> n + 1).limit(99).collect(Collectors.toList());
 
         Integer[] elems =
@@ -104,7 +103,7 @@ public class StreamApiTest {
 
     //Выведите на экран все числа в диапазоне от 1 до 100, которые делятся на 3.
     @Test
-    public void printNumsFromOneToHundredWhichDivideOnThree(){
+    public void printNumsFromOneToHundredWhichDivideOnThreeTest(){
         Stream<Integer> nums = Stream.iterate(1, n -> n + 1).limit(100);
 
         nums.filter(n -> n % 3 == 0).forEach(System.out::println);
@@ -112,7 +111,7 @@ public class StreamApiTest {
 
     //Выведите на экран только те элементы списка, которые больше заданного числа.
     @Test
-    public void printNumsMoreThanInputNum(){
+    public void printNumsMoreThanInputNumTest(){
         Stream<Integer> nums = Stream.iterate(1, n -> n + 1).limit(100);
 
         final Integer inputNum = 15;
@@ -134,12 +133,138 @@ public class StreamApiTest {
 
     }
 
-    //Отфильтруйте объекты по определенному свойству, например, выведите все записи из базы данных, у которых значение поля равно 1.
+    //Отфильтруйте объекты по определенному свойству, например, выведите все записи из базы данных, у которых значение поля age больше или равны 20.
     @Test
-    public void filterObjectsByField(){
+    public void filterObjectsByFieldTest(){
+        Stream<Person> personStream = Stream.of(
+                new Person("Petr", "Petrov", 20),
+                new Person("Ivan", "Petrov", 10),
+                new Person("Alex", "Petrov", 15),
+                new Person("Rita", "Petrova", 25),
+                new Person("Oleg", "Petrov", 30)
+        );
+
+        personStream.filter(p -> p.getAge() >= 20).forEach(System.out::println);
+
+    }
+
+    //Отфильтруйте элементы массива, которые не являются числами.
+    @Test
+    public void filterNotNumberTest(){
+
+        Stream someStream = Stream.of(
+                Double.valueOf(4.9),
+                Integer.valueOf(9),
+                "Pop",
+                "UUUUUU",
+                "Wow",
+                Long.valueOf(88888888889l),
+                Boolean.valueOf(false)
+        );
+
+        someStream.filter(p -> !(p instanceof Number)).forEach(System.out::println);
+    }
+
+
+    //Выведите на экран элементы списка, которые не входят в другой список.
+    @Test
+    public void printListElemWhichNotContainsInAntherListTest(){
+        final List<Integer> list1 = List.of(1, 3, 5, 7, 9);
+        List<Integer> list2 = List.of(1, 2, 4, 5, 6, 10);
+
+        list2.stream().filter(e -> !list1.contains(e)).forEach(System.out::println);
+
+    }
+
+
+    //Собрать элементы Stream в карту, где ключом будет первая буква каждого слова, а значением — само слово. Отсортировать ключи в алфавитном порядке.
+    @Test
+    public void collectElemsToMapTest(){
+        Stream<String> strs = Stream.of("drink", "eat", "fish", "meet", "apple", "banana", "coke");
+
+        TreeMap<String, String> map = strs.collect(
+                Collectors.toMap(
+                        k -> k.substring(0, 1),
+                        v -> v,
+                        (e, r) -> e,
+                        TreeMap::new));
+
+        map.forEach((key, value) -> System.out.println("key = " + key + " value = " + value));
+    }
+
+    //Собрать файлы в Stream в список, где каждый элемент — количество файлов с определенным расширением.
+    @Test
+    public void collectFilesToMapWithConditionTest(){
+        List<File> files =
+                List.of(new File("test.txt"),
+                        new File("dog.png"),
+                        new File("index.html"),
+                        new File("two.txt"),
+                        new File("config.xml"),
+                        new File("conf.xml"));
+
+        Map<String, Long> map = files.stream()
+                .collect(Collectors.groupingBy(
+                        f -> getFileExtension(f.getName()),
+                        Collectors.counting()
+                ));
+
+        map.forEach((k, v) -> System.out.println("extension = " + k + " count = " + v));
+
+
+//        Map<String, List<File>> map = new HashMap<>();
+//
+//        for(int i = 0; i < files.size(); i++){
+//
+//            String fileExtension = getFileExtension(files.get(i).getName());
+//
+//            if(map.containsKey(fileExtension)){
+//                map.get(fileExtension).add(files.get(i));
+//            }
+//
+//            if(!map.containsKey(fileExtension)) {
+//                map.put(fileExtension, new ArrayList<>());
+//                map.get(fileExtension).add(files.get(i));
+//            }
+//
+//        }
+//
+//        map.forEach((e, v) -> System.out.println("extension = " + e + " count = " + v.size()));
+
+    }
+
+    private static String getFileExtension(String fileName) {
+        int i = fileName.lastIndexOf(".") + 1;
+        return fileName.substring(i);
+    }
+
+    //Собрать пользователей в Stream в список объектов, где каждый объект содержит информацию о городе проживания пользователя и количестве пользователей из этого города.
+    @Test
+    public void collectUsersToMapWithConditionTest(){
+        Stream<User> personStream = Stream.of(
+            new User("Anton", 20, City.BREST),
+            new User("Tolik", 21, City.BREST),
+            new User("Kirill", 22, City.BREST),
+                new User("Oleg", 28, City.MINSK),
+                new User("Nastya", 35, City.MINSK),
+                new User("Egor", 27, City.MINSK),
+                new User("Ira", 15, City.MINSK),
+                new User("Veronika", 18, City.MOGILEV),
+                new User("Dasha", 19, City.MOGILEV),
+                new User("Danill", 19, City.GOMEL)
+        );
+
+
+        Map<String, Long> map = personStream.collect(Collectors.groupingBy(
+                u -> u.getCity().getCityName(),
+                Collectors.counting()
+        ));
+
+        map.forEach((k, v) -> System.out.println("city = " + k + " ---> count of users = " + v));
 
 
     }
+
 
 
 
