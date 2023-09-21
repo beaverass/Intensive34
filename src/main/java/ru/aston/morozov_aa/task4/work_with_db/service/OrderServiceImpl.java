@@ -4,9 +4,9 @@ import ru.aston.morozov_aa.task4.work_with_db.dao.OrderDao;
 import ru.aston.morozov_aa.task4.work_with_db.exception.OrderAlreadyExistException;
 import ru.aston.morozov_aa.task4.work_with_db.exception.OrderNotFoundException;
 import ru.aston.morozov_aa.task4.work_with_db.model.Order;
+import ru.aston.morozov_aa.task4.work_with_db.util.GeneratorId;
 
 import java.util.List;
-import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService{
 
@@ -39,8 +39,7 @@ public class OrderServiceImpl implements OrderService{
             return orderDao.create(order);
         }
 
-        UUID uuid = UUID.randomUUID();
-        order.setId(uuid.toString());
+        order.setId(GeneratorId.generateId());
 
         return orderDao.create(order);
     }
